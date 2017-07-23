@@ -1,0 +1,301 @@
+FORMAT: 1A
+HOST: http://polls.apiblueprint.org/
+
+# binarelearning
+binarelearning adalah API untuk data aplikasi Binar eLearning.
+Dilengkapi dengan autentikasi dasar [`Basic123`](https://help.apiary.io/api_101/apib-authentication/)
+
+API ini terdiri atas empat bagian pokok:
++ Authentication `/v1/protected`
++ Users `/v1/users/{email}`, dengan fungsi dasar CRUD
++ Soal `/v1/soal/{id}`, dengan fungsi dasar CRUD
++ Ujian `/v1/ujian/{id}`, dengan fungsi dasar CRUD
+
+## Basic Auth protected resource [/v1/protected]
+
+Proses otentikasi.
+
+### Status [GET]
++ Response 401
+    + Headers
+
+            WWW-Authenticate: Basic realm="protected"
+
++ Request
+    + Headers
+    
+            Authorization: Basic ABC123
+
++ Response 200 (application/json)
+
+            {
+                "status": "ok"
+            }
+
+## Users [/v1/users]
+
+Permintaan terkait data user. 
+
+### Get User Data [GET/{email}]
+
+Menampilkan data user spesifik. 
++ Sintaks `GET /v1/users/lsumshonj@mayoclinic.com` untuk memperoleh data Locke Sumshon.
+
++ Parameters
+    + email: `lsumshonj@mayoclinic.com` (string, required) - email as user identifier.
++ Response 200 (application/json)
+
+        [
+            {
+                "nama": "Locke Sumshon",
+                "email": "lsumshonj@mayoclinic.com",
+                "kelas": "4",
+                "tanggalLahir": "1998-11-01",
+                "tanggalMasuk": "2014-03-27"
+            }
+        ]
+
+### Create User Data [POST]
+
+Memasukkan nama user baru untuk aplikasi eLearning. 
++ sintaks : `POST /v1/users/` dilanjutkan request dalam bentuk JSON meliputi `nama, email, kelas, tanggalLahir`.
+
++ Request (application/json)
+
+        {
+            "nama": "Pramudya Ericson",
+            "email": "Pramericson@liveby.com",
+            "kelas": "9",
+            "tanggalLahir": "1995-03-08"
+        }
+
++ Response 201 (application/json)
+
+    + Body
+
+            {
+                "pesan": "Selamat, user telah terdaftar."
+                "idUser": "8800461",
+                "tanggalMasuk": "2016-11-10",
+                "nama": "Pramudya Ericson",
+                "email": "Pramericson@liveby.com",
+                "kelas": "9",
+                "tanggalLahir": "1995-03-08"
+            }
+
+### Update User [PUT/{email}]
+
+Mengubah data user spesifik. 
++ Sintaks `PUT /v1/users/lsumshonj@mayoclinic.com` dilanjutkan request dalam bentuk JSON meliputi `nama, email, kelas, tanggalLahir`.
+
++ Parameters
+    + email: `lsumshonj@mayoclinic.com` (string, required) - email as user identifier.
+
++ Request (application/json)
+
+        {
+            "nama": "Pramudya Ericson",
+            "email": "Pramericson@liveby.com",
+            "kelas": "9",
+            "tanggalLahir": "1995-03-08"
+        }
+
++ Response 201 (application/json)
+
+    + Body
+
+            {
+                "pesan": "data user telah berhasil diubah",
+                "tanggalPerubahan": "2016-08-05T08:40:51.620Z"
+            }
+
+### Delete User [DELETE]
+
+Menghapus data user. Konfirmasi dengan request `email` user.
++ Sintaks `DELETE /v1/users/`
+
++ Request (application/json)
+
+        {
+            "email": "lsumshonj@mayoclinic.com"
+        }
+
++ Response 201 (application/json)
+
+    + Body
+
+            {
+                "pesan": "User telah dihapus dari database"
+            }
+            
+## Soal [/v1/soal/]
+
+### Get Soal [GET/{id}]
+
+Menampilkan soal secara spesifik dengan parameter `id`.
++ Sintaks `GET /v1/soal/12` untuk soal nomor 12.
+
++ Parameters
+    + id: `12` (number, required) - nomor ID soal yang dicari.
+
++ Response 200 (application/json)
+
+        [
+            {
+                "idSoal": "12",
+                "pertanyaan": "Jika x=lorem dan y=ipsum, maka x+' '+y=...",
+                "jawaban": "lorem ipsum",
+                "pilihan1": "loreng hidung",
+                "pilihan2": "ipsum lorem",
+                "pilihan3": "lorem + ipsum"
+            }
+        ]
+
+### Create Soal [POST]
+
+Membuat soal baru ke database eLearning.
++ Sintaks `POST /v1/soal/` dilanjutkan request JSON `pertanyaan, jawaban, pilihan1, pilihan2, pilihan3`
+
++ Request (application/json)
+
+        {
+            "pertanyaan": "Pernyataan Lorem apabila tidak dilengkapi Ipsum menjadi...",
+            "jawaban": "lorem ipsum",
+            "pilihan1": "loreng hidung",
+            "pilihan2": "ipsum lorem",
+            "pilihan3": "lorem + ipsum"
+        }
+
++ Response 201 (application/json)
+
+    + Body
+
+            {
+                "pesan": "soal berhasil dibuat.",
+                "id": "19"
+                "tanggalPerubahan": "2017-04-05T08:40:51.620Z"
+            }
+
+### Update Soal [POST/{id}]
+
+Mengubah konten soal dengan parameter `id`.
++ Sintaks `PUT /v1/soal/` dilanjutkan request JSON `idSoal, pertanyaan, jawaban, pilihan1, pilihan2, pilihan3`
+
++ Request (application/json)
+
+        {
+            "idSoal": "19",
+            "pertanyaan": "Pernyataan Lorem apabila tidak dilengkapi Ipsum menjadi...",
+            "jawaban": "lorem ipsum",
+            "pilihan1": "loreng hidung",
+            "pilihan2": "ipsum lorem",
+            "pilihan3": "lorem + ipsum"
+        }
+
++ Response 201 (application/json)
+
+    + Body
+
+            {
+                "pesan": "data soal telah berhasil diubah",
+                "tanggalPerubahan": "2016-08-05T08:40:51.620Z"
+            }
+
+### Delete Soal [DELETE/{id}]
+
+Menghapus data soal spesifik.
++ Sintaks `DELETE /v1/soal/12` untuk menghapus soal nomor 12.
+
++ Parameters
+    + id: `12` (number, required) - nomor ID soal yang dicari.
+    
++ Response 201 (application/json)
+
+    + Body
+
+            {
+                "pesan": "Soal telah dihapus dari database"
+            }
+
+## Ujian [/v1/ujian/]
+
+### Get Ujian [GET/{id}]
+
+Menampilkan data ujian secara spesifik dengan parameter `id`.
++ Sintaks `GET /v1/ujian/7` untuk ujian dengan `id` 7.
+
++ Parameters
+    + id: `7` (number, required) - nomor ID soal yang dicari.
+
++ Response 200 (application/json)
+
+        [
+            {
+                "idUjian": "12",
+                "tanggalUjian": "2017-04-05T08:40:51.620Z",
+                "kodeSoal": "203",
+                "kunciJawaban": "A B C D B A C D C A",
+            }
+        ]
+
+### Create Ujian [POST]
+
+Membuat entri ujian baru ke database eLearning.
++ Sintaks `POST /v1/ujian/` dilanjutkan request JSON `tanggalUjian, kodeSoal, kunciJawaban`
+
++ Request (application/json)
+
+        {
+            "tanggalUjian": "2017-04-05T08:40:51.620Z",
+            "kodeSoal": "203",
+            "kunciJawaban": "D A B A C C B B D C",
+        }
+
++ Response 201 (application/json)
+
+    + Body
+
+            {
+                "pesan": "ujian berhasil dibuat."
+                "id": "8"
+                "tanggalPerubahan": "2017-04-05T09:47:51.620Z"
+            }
+
+### Update Ujian [POST/{id}]
+
+Mengubah entri ujian dengan parameter `id`.
++ Sintaks `PUT /v1/ujian/` dilanjutkan request JSON `idUjian, tanggalUjian, kodeSoal, kunciJawaban`
+
++ Request (application/json)
+
+        {
+            "idUjian": "7",
+            "tanggalUjian": "2017-04-05T08:40:51.620Z",
+            "kodeSoal": "203",
+            "kunciJawaban": "A B C D B A C D C A",
+        }
+
++ Response 201 (application/json)
+
+    + Body
+
+            {
+                "pesan": "data ujian telah berhasil diubah",
+                "tanggalPerubahan": "2017-04-05T08:40:51.620Z"
+            }
+
+### Delete Ujian [DELETE/{id}]
+
+Menghapus data ujian spesifik.
++ Sintaks `DELETE /v1/ujian/7` untuk menghapus ujian dengan `id` 7.
+
++ Parameters
+    + id: `7` (number, required) - nomor ID ujian yang dicari.
+    
++ Response 201 (application/json)
+
+    + Body
+
+            {
+                "pesan": "Ujian telah dihapus dari database"
+            }

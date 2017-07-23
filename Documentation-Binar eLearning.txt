@@ -1,0 +1,105 @@
+BINAR ASSESSMENT TEST
+BACK END DEVELOPMENT
+
+Proyek: Binar eLearning
+Versi: 0.1
+Oleh: Yogi Saputro
+
+0. Environment & Dependencies
+- Perancangan database dan API dijalankan dalam sistem operasi Windows 10
+- Database berbasis MySQL menggunakan XAMPP for Windows 5.6.31
+- Pengembangan database dilakukan dengan phpMyAdmin
+- API menggunakan mockup berbasis Apiary (https://apiary.io)
+- Pengujian API dilakukan dengan Postman v5.0.2
+
+1. Pembuatan Database
+- Database dapat dibuat dengan import binar-eLearning.sql
+- Skema database dapat dilihat di file skema-binar-eLearning
+- Database terdiri atas 3 tabel: data_user, data_soal, dan data_ujian. Pemilihan 3 tabel ini disusun berdasarkan requirement yang terdapat dalam soal.
+	a. data_user
+	- Data pengguna eLearning, meliputi identitas, email, tinglatan privilege
+	- PRIMARY KEY: idUser
+
+	b. data_soal
+	- Soal ujian dalam kebutuhan disyaratkan meliputi empat pilihan. Dalam database ini, kebutuhan tersebut dipenuhi dengan satu kolom jawaban dan tiga kolom pilihan (pilihan1, pilihan2, pilihan3). Hal ini dilakukan dengan tujuan agar satu soal dapat didaur ulang dan diubah kunci jawabannya.
+	- Terkait dengan poin sebelumnya, diasumsikan ada sebuah mekanisme di back end yang mampu mengubah soal di database menjadi kumpulan soal yang telah diacak jawaban dan pilihannya, kemudian kuncinya disimpan kembali ke database dalam data_ujian.
+	- PRIMARY KEY: idSoal
+
+	c. data_ujian
+	- Data ujian yang dibuat untuk keperluan spesifik. Kunci jawaban ujian termuat di sini.
+	- PRIMARY KEY: idUjian
+
+	d. Tabel relasi ambil_ujian
+	- menandakan hubungan antara user dan ujian yang telah diambil.
+	- jawaban yang diunggah user tersimpan di sini.
+	- PRIMARY KEY: idAmbilUjian
+	- FOREIGN KEY: idUser, idUjian
+
+- Perintah CRUD
+	
+	CREATE
+	Perintah lengkap untuk CREATE baik database maupun tabel tercantum dalam binar-eLearning.sql
+
+	READ
+	Berikut query yang diperkirakan sering digunakan untuk aplikasi terkait.
+		a. Informasi user berdasarkan login
+		SELECT nama, email, kelas, tanggalLahir, tanggalMasuk 
+		FROM data_user 
+		WHERE (email=[alamat email disini] and passwordUser=[password di sini])
+
+		b. Soal yang tersedia berdasarkan kode soal
+		SELECT idSoal,pertanyaan,jawaban,pilihan1,pilihan2,pilihan3 
+		FROM data_soal 
+		WHERE kodeSoal=[variabel kode soal di sini]
+
+		c. Kunci jawaban ujian spesifik
+		SELECT idUjian,tanggalUjian,kunciJawaban 
+		FROM data_ujian 
+		WHERE idUjian=[variabel ID ujian di sini]
+
+		d. Membandingkan jawaban yang diunggah pengguna dengan kunci jawaban
+		SELECT data_user.nama as 'Nama Peserta',data_ujian.idUjian as 'Kode Ujian',data_ujian.tanggalUjian as 'Tanggal Ambil Ujian',ambil_ujian.unggahJawaban as 'Jawaban Peserta',data_ujian.kunciJawaban as 'Kunci Jawaban' 
+		FROM (ambil_ujian natural join data_ujian) natural join data_user WHERE data_user.idUser=[variabel ID user di sini]
+
+	UPDATE
+	Perintah umum untuk mengganti data dalam database ini
+		a. Mengganti informasi nama dan email pengguna
+		UPDATE data_user 
+		SET nama = 'Nama Baru', email = 'namabaru@wrap.com'
+		WHERE idUser = [variabel ID user di sini]
+
+		b. Mengganti jawaban atau pilihan soal
+		UPDATE data_soal 
+		SET jawaban = 'Insurance policy',
+		pilihan1 = 'Economic embargo',
+		pilihan2 = 'Defense action',
+		pilihan3 = 'Diplomatic immunity'
+		WHERE idSoal = [variabel ID soal di sini]
+
+		c. Mengganti kunci jawaban ujian
+		UPDATE data_ujian 
+		SET kunciJawaban = 'A B A D C B D D C A'
+		WHERE idUjian = [variabel ID ujian di sini]
+
+	DELETE
+	Perintah umum untuk menghapus data dalam database ini
+		a. Menghapus data user
+		DELETE FROM data_user WHERE (email=[variabel email di sini])
+		DELETE FROM data_user WHERE (idUser=[variabel ID user di sini])
+
+		b. Menghapus soal
+		DELETE FROM data_soal WHERE (idSoal=[variabel ID soal di sini])
+
+		c. Menghapus entri ujian
+		DELETE FROM data_ujian WHERE (idUjian=[variabel ID ujian di sini])
+
+
+2. Pembuatan API
+- API yang dibuat merupakan mockup dengan apiary.io.
+- Variabel antara API dan database disesuaikan untuk mempermudah pengembangan API sebenarnya
+- Cek API dapat dilakukan di http://private-d51a9-binartraining1.apiary-mock.com
+- API ini terdiri atas empat bagian pokok:
+	a. Authentication `/v1/protected`
+	b. Users `/v1/users/`, dengan fungsi dasar CRUD
+	c. Soal `/v1/soal/`, dengan fungsi dasar CRUD
+	d. Ujian `/v1/ujian/`, dengan fungsi dasar CRUD
