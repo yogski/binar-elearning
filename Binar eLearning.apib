@@ -261,6 +261,28 @@ Membuat entri ujian baru ke database eLearning.
                 "tanggalPerubahan": "2017-04-05T09:47:51.620Z"
             }
 
+### Submit Ujian [POST/submit/]
+
+Mengunggah jawaban ujian oleh user database eLearning.
++ Sintaks `POST /v1/ujian/submit` dilanjutkan request JSON `idUser, tanggalAmbil, kodeSoal, unggahJawaban`
+
++ Request (application/json)
+
+        {
+            "idUser": "15",
+            "tanggalAmbil": "2017-04-05T08:40:51.620Z",
+            "kodeSoal": "203",
+            "kunciJawaban": "D A B A C C B B D C",
+        }
+
++ Response 201 (application/json)
+
+    + Body
+
+            {
+                "pesan": "jawaban ujian berhasil diunggah."
+            }
+
 ### Update Ujian [POST/{id}]
 
 Mengubah entri ujian dengan parameter `id`.
